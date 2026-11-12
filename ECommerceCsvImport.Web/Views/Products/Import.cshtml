@@ -1,0 +1,66 @@
+﻿@model ECommerceCsvImport.Core.Models.ImportViewModel
+
+@{
+    ViewData["Title"] = "Импорт товаров";
+}
+
+<h2>Импорт товаров</h2>
+
+<form method="post" asp-controller="Products" asp-action="Import" enctype="multipart/form-data" class="mb-4">
+    @Html.AntiForgeryToken()
+    
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">Способ 1: Загрузка файла через браузер</div>
+        <div class="card-body">
+            <input type="file" name="file" class="form-control" accept=".csv" />
+        </div>
+    </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light">Способ 2: Указание полного пути к файлу</div>
+        <div class="card-body">
+            <input type="text" name="filePath" value="@Model.FilePath" class="form-control" placeholder="Например: /csv/sample_products.csv" />
+        </div>
+    </div>
+    
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Импортировать товары</button>
+        <a asp-action="Index" class="btn btn-primary">Вернуться к каталогу</a>
+    </div>
+</form>
+
+@if (Model.Result != null)
+{
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-light text-dark">
+            <h4 class="mb-0">Результаты импорта</h4>
+        </div>
+        <div class="card-body">
+            <p>Всего строк: <strong>@Model.Result.TotalRows</strong></p>
+            <p>Успешно импортировано: <strong class="text-success">@Model.Result.ImportedCount</strong></p>
+            <p>Ошибок: <strong class="text-danger">@Model.Result.ErrorCount</strong></p>
+
+            @if (Model.Result.Errors.Count > 0)
+            {
+                <h5 class="mt-4 mb-2">Список ошибок:</h5>
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Строка</th>
+                            <th>Описание ошибки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var error in Model.Result.Errors)
+                        {
+                            <tr>
+                                <td class="text-center">@error.RowNumber</td>
+                                <td>@error.Message</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}

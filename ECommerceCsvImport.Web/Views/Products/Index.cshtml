@@ -1,0 +1,64 @@
+﻿@model ECommerceCsvImport.Core.Models.ProductsIndexViewModel
+
+@{
+    ViewData["Title"] = "Каталог";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Каталог товаров</h2>
+    <a asp-action="Import" class="btn btn-success">Перейти к импорту</a>
+</div>
+
+<table class="table table-bordered table-striped align-middle">
+    <thead>
+        <tr class="text-center">
+            <th>Артикул</th>
+            <th>Название</th>
+            <th>Бренд</th>
+            <th>Цена</th>
+            <th>Категория</th>
+            <th>Гарантия</th>
+            <th>Остаток</th>
+            <th>Активен</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Sku</td>
+                    <td>@product.Name</td>
+                    <td>@product.Brand</td>
+                    <td>@product.Price.ToString("N0") @product.Currency</td>
+                    <td>@product.CategoryName</td>
+                    <td>@product.WarrantyMonths мес.</td>
+                    <td>@product.StockQuantity</td>
+                    <td>@(product.IsActive ? "Да" : "Нет")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" class="text-center py-4 text-muted">
+                    Товары еще не импортированы.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Products != null && Model.Products.Any())
+{
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-light text-dark">
+            <h4 class="mb-0">Итоги</h4>
+        </div>
+        <div class="card-body">
+            <p>Всего товаров: <strong>@Model.TotalCount шт.</strong></p>
+            <p>Общая стоимость: <strong>@Model.TotalValue.ToString("N0") RUB</strong></p>
+        </div>
+    </div>
+}
